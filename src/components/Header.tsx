@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Activity } from "lucide-react";
+import { Activity, User } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
 export const Header = () => {
@@ -33,6 +33,12 @@ export const Header = () => {
             
             {user ? (
               <>
+                <Link to="/profile">
+                  <Button variant="ghost" size="sm">
+                    <User className="h-4 w-4 mr-2" />
+                    Profile
+                  </Button>
+                </Link>
                 {isAdmin && (
                   <Link to="/admin">
                     <Button variant="outline">Admin Panel</Button>

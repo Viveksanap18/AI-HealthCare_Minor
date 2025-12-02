@@ -89,6 +89,108 @@ export type Database = {
         }
         Relationships: []
       }
+      user_profiles: {
+        Row: {
+          id: string
+          email: string
+          full_name: string | null
+          age: number | null
+          blood_group: string | null
+          height: number | null
+          weight: number | null
+          gender: string | null
+          phone: string | null
+          address: string | null
+          city: string | null
+          pincode: string | null
+          medical_conditions: string | null
+          allergies: string | null
+          medications: string | null
+          emergency_contact: string | null
+          emergency_contact_number: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id: string
+          email: string
+          full_name?: string | null
+          age?: number | null
+          blood_group?: string | null
+          height?: number | null
+          weight?: number | null
+          gender?: string | null
+          phone?: string | null
+          address?: string | null
+          city?: string | null
+          pincode?: string | null
+          medical_conditions?: string | null
+          allergies?: string | null
+          medications?: string | null
+          emergency_contact?: string | null
+          emergency_contact_number?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          email?: string
+          full_name?: string | null
+          age?: number | null
+          blood_group?: string | null
+          height?: number | null
+          weight?: number | null
+          gender?: string | null
+          phone?: string | null
+          address?: string | null
+          city?: string | null
+          pincode?: string | null
+          medical_conditions?: string | null
+          allergies?: string | null
+          medications?: string | null
+          emergency_contact?: string | null
+          emergency_contact_number?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      user_medical_history: {
+        Row: {
+          id: string
+          user_id: string
+          disease_name: string
+          disease_date: string
+          recovery_date: string | null
+          severity: string | null
+          notes: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          disease_name: string
+          disease_date: string
+          recovery_date?: string | null
+          severity?: string | null
+          notes?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          disease_name?: string
+          disease_date?: string
+          recovery_date?: string | null
+          severity?: string | null
+          notes?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
