@@ -1,0 +1,7 @@
+project_id = "bvyfznzihykonaeugpnw"
+
+[functions.chat]
+verify_jwt = false
+
+[functions.upload-disease-data]
+verify_jwt = true
