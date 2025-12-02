@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, User, Heart, Ruler, Weight, Trash2, Plus, Clock } from "lucide-react";
+import { Loader2, User, Heart, Ruler, Weight, Trash2, Plus, Clock, Edit2, Save } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -28,6 +28,7 @@ import {
 
 interface UserProfile {
   id: string;
+  user_id: string;
   email: string;
   full_name: string;
   age: number | null;
@@ -105,7 +106,7 @@ const Profile = () => {
       const { data, error } = await (supabase
         .from("user_profiles" as any)
         .select("*")
-        .eq("id", user.id)
+        .eq("user_id", user.id)
         .maybeSingle() as any);
 
       if (error && error.code !== "PGRST116") {
@@ -138,7 +139,7 @@ const Profile = () => {
           .from("user_profiles" as any)
           .insert([
             {
-              id: user.id,
+              user_id: user.id,
               email: user.email,
               full_name: "",
             },
@@ -206,7 +207,7 @@ const Profile = () => {
       const { data, error } = await (supabase
         .from("user_profiles" as any)
         .update(updateData)
-        .eq("id", user.id)
+        .eq("user_id", user.id)
         .select()
         .single() as any);
 
@@ -329,8 +330,8 @@ const Profile = () => {
           {/* Profile Display Card */}
           {profile && !isEditing && (
             <>
-              <Card>
-                <CardHeader>
+              <Card className="border-2 border-primary/20">
+                <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5">
                   <div className="flex items-center gap-3">
                     <User className="h-8 w-8 text-primary" />
                     <div>
@@ -339,104 +340,133 @@ const Profile = () => {
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent>
-                  <div className="grid md:grid-cols-2 gap-6">
-                    {/* Basic Information */}
-                    <div className="space-y-4">
-                      <div>
-                        <p className="text-sm font-semibold text-muted-foreground">Full Name</p>
-                        <p className="text-lg font-medium">{profile.full_name || "Not provided"}</p>
+                <CardContent className="pt-8">
+                  {/* Name and Age Section */}
+                  <div className="mb-8 pb-6 border-b">
+                    <h3 className="text-lg font-bold mb-4 text-primary">Personal Information</h3>
+                    <div className="grid md:grid-cols-2 gap-6">
+                      {/* Full Name Card */}
+                      <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 shadow-sm">
+                        <p className="text-xs font-semibold text-blue-600 uppercase tracking-wide">Full Name</p>
+                        <p className="text-2xl font-bold text-gray-800 mt-2">{profile.full_name || "Not provided"}</p>
                       </div>
-                      <div>
-                        <p className="text-sm font-semibold text-muted-foreground">Age</p>
-                        <p className="text-lg font-medium">{profile.age || "Not provided"}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-muted-foreground">Gender</p>
-                        <p className="text-lg font-medium">{profile.gender || "Not provided"}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-muted-foreground">Phone</p>
-                        <p className="text-lg font-medium">{profile.phone || "Not provided"}</p>
-                      </div>
-                    </div>
 
-                    {/* Health Information */}
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2">
-                        <Heart className="h-5 w-5 text-red-500" />
-                        <div>
-                          <p className="text-sm font-semibold text-muted-foreground">Blood Group</p>
-                          <p className="text-lg font-medium">{profile.blood_group || "Not provided"}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Ruler className="h-5 w-5 text-blue-500" />
-                        <div>
-                          <p className="text-sm font-semibold text-muted-foreground">Height</p>
-                          <p className="text-lg font-medium">
-                            {profile.height ? `${profile.height} cm` : "Not provided"}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Weight className="h-5 w-5 text-amber-500" />
-                        <div>
-                          <p className="text-sm font-semibold text-muted-foreground">Weight</p>
-                          <p className="text-lg font-medium">
-                            {profile.weight ? `${profile.weight} kg` : "Not provided"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Address Information */}
-                    <div className="space-y-4">
-                      <div>
-                        <p className="text-sm font-semibold text-muted-foreground">Address</p>
-                        <p className="text-lg font-medium">{profile.address || "Not provided"}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-muted-foreground">City</p>
-                        <p className="text-lg font-medium">{profile.city || "Not provided"}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-muted-foreground">Pincode</p>
-                        <p className="text-lg font-medium">{profile.pincode || "Not provided"}</p>
-                      </div>
-                    </div>
-
-                    {/* Medical Information */}
-                    <div className="space-y-4">
-                      <div>
-                        <p className="text-sm font-semibold text-muted-foreground">Medical Conditions</p>
-                        <p className="text-lg font-medium">{profile.medical_conditions || "None"}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-muted-foreground">Allergies</p>
-                        <p className="text-lg font-medium">{profile.allergies || "None"}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-muted-foreground">Current Medications</p>
-                        <p className="text-lg font-medium">{profile.medications || "None"}</p>
-                      </div>
-                    </div>
-
-                    {/* Emergency Contact */}
-                    <div className="space-y-4">
-                      <div>
-                        <p className="text-sm font-semibold text-muted-foreground">Emergency Contact</p>
-                        <p className="text-lg font-medium">{profile.emergency_contact || "Not provided"}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-muted-foreground">Emergency Contact Number</p>
-                        <p className="text-lg font-medium">{profile.emergency_contact_number || "Not provided"}</p>
+                      {/* Age Card */}
+                      <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-6 shadow-sm">
+                        <p className="text-xs font-semibold text-green-600 uppercase tracking-wide">Age</p>
+                        <p className="text-2xl font-bold text-gray-800 mt-2">{profile.age || "Not provided"} years</p>
                       </div>
                     </div>
                   </div>
 
-                  <Button onClick={() => setIsEditing(true)} className="w-full mt-6">
-                    Edit Profile
+                  {/* Health Metrics Section */}
+                  <div className="mb-8 pb-6 border-b">
+                    <h3 className="text-lg font-bold mb-4 text-primary flex items-center gap-2">
+                      <Heart className="h-5 w-5" /> Health Metrics
+                    </h3>
+                    <div className="grid md:grid-cols-3 gap-6">
+                      {/* Blood Group Card */}
+                      <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-lg p-6 shadow-sm border border-red-200">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Heart className="h-5 w-5 text-red-500" />
+                          <p className="text-xs font-semibold text-red-600 uppercase tracking-wide">Blood Group</p>
+                        </div>
+                        <p className="text-3xl font-bold text-gray-800">{profile.blood_group || "—"}</p>
+                      </div>
+
+                      {/* Height Card */}
+                      <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 shadow-sm border border-blue-200">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Ruler className="h-5 w-5 text-blue-500" />
+                          <p className="text-xs font-semibold text-blue-600 uppercase tracking-wide">Height</p>
+                        </div>
+                        <p className="text-3xl font-bold text-gray-800">
+                          {profile.height ? `${profile.height}` : "—"}
+                          <span className="text-lg text-gray-600 ml-1">cm</span>
+                        </p>
+                      </div>
+
+                      {/* Weight Card */}
+                      <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-6 shadow-sm border border-purple-200">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Weight className="h-5 w-5 text-purple-500" />
+                          <p className="text-xs font-semibold text-purple-600 uppercase tracking-wide">Weight</p>
+                        </div>
+                        <p className="text-3xl font-bold text-gray-800">
+                          {profile.weight ? `${profile.weight}` : "—"}
+                          <span className="text-lg text-gray-600 ml-1">kg</span>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Basic Information */}
+                  <div className="grid md:grid-cols-2 gap-6 mb-8 pb-6 border-b">
+                    <div>
+                      <p className="text-sm font-semibold text-muted-foreground">Gender</p>
+                      <p className="text-lg font-medium mt-2">{profile.gender || "Not provided"}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-muted-foreground">Phone</p>
+                      <p className="text-lg font-medium mt-2">{profile.phone || "Not provided"}</p>
+                    </div>
+                  </div>
+
+                  {/* Address Information */}
+                  <div className="mb-8 pb-6 border-b">
+                    <h3 className="text-lg font-bold mb-4 text-primary">Contact & Address</h3>
+                    <div className="grid md:grid-cols-3 gap-4">
+                      <div className="bg-gray-50 rounded-lg p-4">
+                        <p className="text-sm font-semibold text-muted-foreground">Address</p>
+                        <p className="text-lg font-medium mt-2">{profile.address || "Not provided"}</p>
+                      </div>
+                      <div className="bg-gray-50 rounded-lg p-4">
+                        <p className="text-sm font-semibold text-muted-foreground">City</p>
+                        <p className="text-lg font-medium mt-2">{profile.city || "Not provided"}</p>
+                      </div>
+                      <div className="bg-gray-50 rounded-lg p-4">
+                        <p className="text-sm font-semibold text-muted-foreground">Pincode</p>
+                        <p className="text-lg font-medium mt-2">{profile.pincode || "Not provided"}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Medical Information */}
+                  <div className="mb-8 pb-6 border-b">
+                    <h3 className="text-lg font-bold mb-4 text-primary">Medical Information</h3>
+                    <div className="space-y-4">
+                      <div className="bg-orange-50 rounded-lg p-4 border border-orange-200">
+                        <p className="text-sm font-semibold text-orange-600">Medical Conditions</p>
+                        <p className="text-lg font-medium mt-2">{profile.medical_conditions || "None"}</p>
+                      </div>
+                      <div className="bg-red-50 rounded-lg p-4 border border-red-200">
+                        <p className="text-sm font-semibold text-red-600">Allergies</p>
+                        <p className="text-lg font-medium mt-2">{profile.allergies || "None"}</p>
+                      </div>
+                      <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                        <p className="text-sm font-semibold text-blue-600">Current Medications</p>
+                        <p className="text-lg font-medium mt-2">{profile.medications || "None"}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Emergency Contact */}
+                  <div className="mb-8">
+                    <h3 className="text-lg font-bold mb-4 text-primary">Emergency Contact</h3>
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="bg-red-50 rounded-lg p-6 border border-red-200">
+                        <p className="text-sm font-semibold text-red-600 uppercase">Emergency Contact Name</p>
+                        <p className="text-xl font-bold text-gray-800 mt-3">{profile.emergency_contact || "Not provided"}</p>
+                      </div>
+                      <div className="bg-red-50 rounded-lg p-6 border border-red-200">
+                        <p className="text-sm font-semibold text-red-600 uppercase">Emergency Contact Number</p>
+                        <p className="text-xl font-bold text-gray-800 mt-3">{profile.emergency_contact_number || "Not provided"}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Button onClick={() => setIsEditing(true)} className="w-full mt-6 bg-primary hover:bg-primary/90 py-6 text-lg font-semibold rounded-lg transition-all duration-200 hover:shadow-lg">
+                    ✏️ Edit Profile
                   </Button>
                 </CardContent>
               </Card>

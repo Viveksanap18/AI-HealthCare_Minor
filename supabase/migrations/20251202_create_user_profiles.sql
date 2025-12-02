@@ -1,6 +1,7 @@
 -- Create user_profiles table for storing user health details
-CREATE TABLE IF NOT EXISTS user_profiles (
-  id UUID PRIMARY KEY REFERENCES auth.users (id) ON DELETE CASCADE,
+CREATE TABLE IF NOT EXISTS public.user_profiles (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL UNIQUE REFERENCES auth.users (id) ON DELETE CASCADE,
   email TEXT NOT NULL UNIQUE,
   full_name TEXT,
   age INTEGER,
@@ -22,9 +23,9 @@ CREATE TABLE IF NOT EXISTS user_profiles (
 );
 
 -- Create user_medical_history table for disease history
-CREATE TABLE IF NOT EXISTS user_medical_history (
+CREATE TABLE IF NOT EXISTS public.user_medical_history (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID NOT NULL REFERENCES user_profiles(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES public.user_profiles(user_id) ON DELETE CASCADE,
   disease_name TEXT NOT NULL,
   disease_date DATE NOT NULL,
   recovery_date DATE,
@@ -35,57 +36,57 @@ CREATE TABLE IF NOT EXISTS user_medical_history (
 );
 
 -- Create indexes for faster queries
-CREATE INDEX IF NOT EXISTS idx_user_profiles_email ON user_profiles(email);
-CREATE INDEX IF NOT EXISTS idx_user_profiles_created_at ON user_profiles(created_at);
-CREATE INDEX IF NOT EXISTS idx_user_medical_history_user_id ON user_medical_history(user_id);
-CREATE INDEX IF NOT EXISTS idx_user_medical_history_date ON user_medical_history(disease_date);
+CREATE INDEX IF NOT EXISTS idx_user_profiles_email ON public.user_profiles(email);
+CREATE INDEX IF NOT EXISTS idx_user_profiles_created_at ON public.user_profiles(created_at);
+CREATE INDEX IF NOT EXISTS idx_user_medical_history_user_id ON public.user_medical_history(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_medical_history_date ON public.user_medical_history(disease_date);
 
 -- Enable RLS (Row Level Security) for user_profiles
-ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.user_profiles ENABLE ROW LEVEL SECURITY;
 
 -- Create RLS policies for user_profiles
 -- Allow users to read their own profile
 CREATE POLICY "Users can read own profile"
-  ON user_profiles
+  ON public.user_profiles
   FOR SELECT
-  USING (auth.uid() = id);
+  USING (auth.uid() = user_id);
 
 -- Allow users to update their own profile
 CREATE POLICY "Users can update own profile"
-  ON user_profiles
+  ON public.user_profiles
   FOR UPDATE
-  USING (auth.uid() = id);
+  USING (auth.uid() = user_id);
 
 -- Allow users to insert their own profile
 CREATE POLICY "Users can insert own profile"
-  ON user_profiles
+  ON public.user_profiles
   FOR INSERT
-  WITH CHECK (auth.uid() = id);
+  WITH CHECK (auth.uid() = user_id);
 
 -- Enable RLS (Row Level Security) for user_medical_history
-ALTER TABLE user_medical_history ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.user_medical_history ENABLE ROW LEVEL SECURITY;
 
 -- Create RLS policies for user_medical_history
 -- Allow users to read their own medical history
 CREATE POLICY "Users can read own medical history"
-  ON user_medical_history
+  ON public.user_medical_history
   FOR SELECT
-  USING (user_id = (SELECT id FROM user_profiles WHERE id = auth.uid()));
+  USING (user_id = (SELECT user_id FROM public.user_profiles WHERE user_id = auth.uid()));
 
 -- Allow users to create medical history records
 CREATE POLICY "Users can create own medical history"
-  ON user_medical_history
+  ON public.user_medical_history
   FOR INSERT
-  WITH CHECK (user_id = (SELECT id FROM user_profiles WHERE id = auth.uid()));
+  WITH CHECK (user_id = (SELECT user_id FROM public.user_profiles WHERE user_id = auth.uid()));
 
 -- Allow users to update their medical history
 CREATE POLICY "Users can update own medical history"
-  ON user_medical_history
+  ON public.user_medical_history
   FOR UPDATE
-  USING (user_id = (SELECT id FROM user_profiles WHERE id = auth.uid()));
+  USING (user_id = (SELECT user_id FROM public.user_profiles WHERE user_id = auth.uid()));
 
 -- Allow users to delete their medical history
 CREATE POLICY "Users can delete own medical history"
-  ON user_medical_history
+  ON public.user_medical_history
   FOR DELETE
-  USING (user_id = (SELECT id FROM user_profiles WHERE id = auth.uid()));
+  USING (user_id = (SELECT user_id FROM public.user_profiles WHERE user_id = auth.uid()));
