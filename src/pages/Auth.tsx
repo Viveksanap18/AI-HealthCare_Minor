@@ -22,7 +22,7 @@ const Auth = () => {
 
   useEffect(() => {
     if (user) {
-      navigate("/");
+      navigate("/chatbot");
     }
   }, [user, navigate]);
 

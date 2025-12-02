@@ -6,11 +6,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { DiseaseAlertCard } from "@/components/DiseaseAlertCard";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { MessageSquare, Shield, Database, Activity, Search, MapPin } from "lucide-react";
 import { toast } from "sonner";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [recentAlerts, setRecentAlerts] = useState<any[]>([]);
   const [pincode, setPincode] = useState("");
   const [pincodeAlerts, setPincodeAlerts] = useState<any[]>([]);
@@ -74,6 +76,15 @@ const Index = () => {
     }
   };
 
+  const handleChatClick = () => {
+    if (!user) {
+      toast.info("Please sign in to access the chatbot");
+      navigate("/auth");
+    } else {
+      navigate("/chatbot");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -112,9 +123,9 @@ const Index = () => {
             </div>
           </div>
           
-          <Button size="lg" onClick={() => navigate("/chatbot")} className="text-lg px-8">
+          <Button size="lg" onClick={handleChatClick} className="text-lg px-8">
             <MessageSquare className="mr-2 h-5 w-5" />
-            Chat Now
+            {user ? "Chat Now" : "Sign In to Chat"}
           </Button>
         </div>
       </section>

@@ -102,30 +102,7 @@ src/
 5. Add environment variables in project settings
 6. Click "Deploy"
 
-**Live URL**: https://your-project.vercel.app
-
-### Option 2: Deploy on Netlify
-
-1. Go to [netlify.com](https://netlify.com)
-2. Click "New site from Git"
-3. Connect your GitHub account
-4. Select the repository
-5. Build settings:
-   - Build command: `npm run build`
-   - Publish directory: `dist`
-6. Add environment variables
-7. Click "Deploy"
-
-### Option 3: Deploy on GitHub Pages
-
-```bash
-# Add to package.json scripts
-"deploy": "npm run build && gh-pages -d dist"
-
-# Run
-npm run deploy
-```
-
+**Live URL**: https://ai-health-care-minor.vercel.app/
 ## 📊 Database Setup (Supabase)
 
 1. Create a new Supabase project
